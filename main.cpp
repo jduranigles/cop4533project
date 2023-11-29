@@ -1,9 +1,42 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <climits>
 
 using namespace std;
 
+    void traceback(vector<vector<vector<int>>> vec,vector<int> weight ,int i, int w, int k){ 
+        
+        vector<int> solution;
+        //vector of ints in which we will record the i of each item in the optimal subset
+        
+        while(k > 0)
+        //loop continues until we pull k items which means the subset is complete
+        {
+            
+            if(vec[i][w][k] > vec[i-1][w][k])
+            //work backwards from OPT[i][w][k] to find which i causes a change in OPT, 
+            //meaning that i is part of the solution subset
+            {
+                w -= weight[i-1];
+                k--;
+                solution.push_back(i);
+                //we add this i to our solution subset and subtract the weight, also decrement k so the loop can terminate
+            }
+            i--;
+        }
+            
+            
+            //prints out the solution subset, "{i value of each item in the subset}"
+            cout << "{";
+            for(int i = solution.size()-1; i >= 0 ; i--)
+            {
+                cout << solution[i];
+                if(i != 0) cout << " ";    
+            }
+            cout << "}";
+        
+    }
 
  void function(int n, int W, int l, vector<int> weight, vector<int> value) {
      //defining opt(i,w,k) based on recursive equation
@@ -49,12 +82,18 @@ using namespace std;
          }
      }
      cout << "OPT(" << n << ", " << W << ", " << l << "): " << OPT[n][W][l] << endl;
+     
+     //if opt returns a negative number then no solution, otherwise call traceback
+     if(OPT[n][W][l] < 0)
+     { cout << "No Solution"; }
+     else
+     {traceback(OPT, weight ,n, W, l); }
  }
 
 int main() {
-     vector<int> testWeight = { 3, 4, 21, 4, 6, 7, 8 };
-     vector<int> testValue = { 1, 1, 3, 5, 10, 8, 8 };
-     function(7, 9, 1, testWeight, testValue);
-     //Should be {3, 6} <-- Max weight of 9, with a max value of 11
+     vector<int> testWeight = { 1, 2, 2, 4, 2, 1, 3, 2 };
+     vector<int> testValue = { 5, 4, 3, 6, 10, 3, 9, 3 };
+     function(8, 6, 3, testWeight, testValue);
+     
      return 0;
 }
